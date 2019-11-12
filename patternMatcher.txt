@@ -1,0 +1,181 @@
+You are given two non-empty strings. The first one is a pattern consisting of only "x"s and / or "y"s; the other one is a normal string of alphanumeric characters. Write a function that checks whether or not the normal string matches the pattern. A string S0 is said to match a pattern if replacing all"x"s in the pattern with
+some string S1 and replacing all"y"s in the pattern with some string S2 yields the same string S0. If the input string does not match the input pattern, return an
+empty array; otherwise, return an array holding the representations of"x" and "y"in the normal string, in that order. If the pattern does not contain any "x"s or
+"y"s, the respective letter should be represented by an empty string in the final array that you return. Assume that there will never be more than one pair of
+strings S1 and S2 that appropriately represent"x" and "y"in the input string.
+
+input: "xxyxxy", gogopowerangergogopowerranger
+out ["go", "powerranger"]
+
+function patternMatcher(pattern,string){
+  // helperMethod to make sure x comes first
+  pattern = pattern.split("")
+  let flippedXandY = makeSureXComesFirst(pattern) // (HelperMethod)
+  let y = 'y'
+  let x = 'x'
+  // get count of x,y and get y first position
+  let hash = {x: 0, y: 0}
+  let firstYPosition = getCountAndYFirstPosition(hash,pattern) // (HelperMethod)
+  if(hash[y] > 0){
+   let xLength = 1
+  while(xLength < string.length){
+    let yLength = (string.length - (hash[x] * xLength)) / hash[y]
+    if(yLength < 0){
+      break;
+    }
+    if(yLength % 1 !== 0){
+      xLength++
+      continue
+    }
+    let yIdx = firstYPosition * xLength
+    
+    let xValue = getValueStartAtIdx(0, xLength, string) // (HelperMethod)
+    let yValue = getValueStartAtIdx(yIdx, yLength, string)
+    
+    let newCreatedString = createNewString(xValue,yValue,pattern, string) //(HelperMethod)
+    if(newCreatedString === string){
+      return flippedXandY ? [yValue, xValue] : [xValue, yValue]
+    }else {
+      xLength += 1
+    }
+  }
+  }else {
+    let xLength = 1
+    let startingPosition = 0
+    while(xLength <= string.length){
+      let xValue = getValueStartAtIdx(startingPosition, xLength,string)
+      let newCreatedString = createNewString(xValue, "", pattern, string)
+      if(newCreatedString === string){
+        return flippedXandY ? ["", xValue] : [xValue, ""]
+      }
+      xLength+= 1
+    }
+  }
+
+  return []
+}
+
+function makeSureXComesFirst(arr){
+  if(arr[0] === 'x') return false
+  for(let i = 0; i < arr.length; i++){
+    arr[i] = arr[i] === 'x' ? 'y' : 'x'
+  }
+  return true
+}
+
+
+
+function getCountAndYFirstPosition(hash,arr){
+  let firstPosition = null;
+  
+  for(let i = 0; i < arr.length; i++){
+    if(firstPosition === null && arr[i] === 'y'){
+      firstPosition = i
+    }
+    hash[arr[i]] += 1
+  }
+  return firstPosition
+}
+
+
+function getValueStartAtIdx(startIdx, length, string){
+  let newString = ""
+  let counter = 0
+  for(let i = startIdx; counter < length; i++){
+    newString += string[i]
+    counter++
+  }
+  return newString;
+}
+
+
+function createNewString(xValue,yValue,pattern,string){
+ let result = ""
+ for(const el of pattern){
+  if(el === 'x'){
+    result += xValue
+  }else {
+    result += yValue
+  }
+ }
+ return result
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Make sure x is the first position --> use a helpermethod
+    If y is the first position set a flag to be true so at the end we will be able to flip our answer
+  
+  // use a second helperMethod --> return a hashmap of how many x and y we have and the index of the first y
+  
+  // In main method
+  
+  [x,x,y,x,x,y] --> HELPER
+  hash = {x : 4, y: 2} --> HELPER
+  firstPositionidx: 2
+  
+  
+      we check if we have a y
+      if( we have a y){
+        let xLength = 1
+        while(xLength < string.length){
+         
+          yLength = (string.length - (xLength * hash[x])) / 2
+          if(yLength is not an evenNumber we will increase xLength){ -->  (yLength % 1 !== 0)
+            xLength++
+            continue
+          }
+          
+          yIdx = (firstPositionIdx * xLength) 
+          
+          let yValue = getValueStartingAt(yIdx, yLength) --> HELPER
+          let xValue = getValueStartiingAt(xIdx, xLength) --> HELPER
+          
+          let newCreatedString = createNewString(xValue, yValue, pattern) --> HELPER
+          if(newCreatedString === string){
+            return flippedXandY ? [yValue, xValue] : [xValue, yValue] 
+          }else {
+            xLength++
+          }
+          
+          // use a helperMethod to use the componation to create a new string and compare it to our given string
+        
+        }
+      
+      }else {
+        xLength = 1
+        firstXPostion = 0
+        while(xLength < string.length){
+          let xValue = getValueStartingAt(firstXPosition, xLength)
+          let newCreatedString = createNewString(xValue, "", pattern)
+          if(newCreatedString === string){
+            return flippedXAndY ? [xValue, ""] : ["", xValue]
+          }
+          xLength++
+        }
+      
+      
+      }
+  
+  
