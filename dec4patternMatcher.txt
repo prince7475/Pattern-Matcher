@@ -1,0 +1,356 @@
+Pattern Matcher
+You are given two non-empty strings. The first one is a pattern consisting of only "x"s and / or "y"s; 
+the other one is a normal string of alphanumeric characters. Write a function that checks whether or
+not the normal string matches the pattern. A string S0 is said to match a pattern if replacing all"x"s in the pattern with
+some string S1 and replacing all"y"s in the pattern with some string S2 yields the same string S0. If 
+the input string does not match the input pattern, return an empty array; otherwise, return an array holding the 
+representations of"x" and "y"in the normal string,
+in that order. If the pattern does not contain any "x"s or
+"y"s, the respective letter should be represented by an empty string in the final array that you return.
+Assume that there will never be more than one pair of
+strings S1 and S2 that appropriately represent"x" and "y"in the input string.
+
+Sample input:"xxyxxy","gogopowerrangergogopowerranger"
+Sample output: ["go","powerranger"]
+
+
+function patternMatcher(pattern, string) {
+  // Write your code here.
+}
+
+main(pattern,string)
+  let newPattern = getNewPattern(pattern) [x,x,y,x,x,y] // HELPER
+  let flipped = newPattern.flipped
+  pattern = newPattern.pattern
+  
+  const patternCount = getPatternCount(pattern) {x: 4, y:2,firstyIdx: 2} // (HELPER)
+  
+  if(patternCount.y > 0){
+    let xCount = patternCount.x
+    let yCount = patternCount.y
+    let firstYIdx = patternCount.firstYIdx
+    
+    let xLength = 1
+    while(xLength <= string.length){
+     yLength = string.length - (xCount * xLength) / yCount
+     if((yLength % 1) !== 0) continue
+     yStartIndex = firstYIdx * xLength
+     
+     
+     let xSubStr = getSubString(0,xLength)
+     let ySubStr = getSubString(yStartIndex,yLength) // (Helper)
+     
+     let currNewString = getNewString(xSubStr,ySubStr,pattern) // HELPER
+     if(currNewString === string){
+      return flipped ? [ySubStr,xSubStr] : [xSubStr, ySubStr]
+      }  
+     xLength++
+    }
+  }else {
+    let xLength = 1
+    while(xLength <= string.length){
+      
+      let xSubStr = getSubString(0,xLength)
+      let currNewString = getNewString(xSubStr, "", pattern)
+      if(currNewString === string){
+        return flipped ? ["", xSubStr] : [xSubStr, ""]
+      }
+      xLength++
+    }
+  
+  }
+  return []
+  
+
+
+
+
+
+
+
+function patternMatcher(pattern, string) {
+    let newPatternObj = getNewPattern(pattern)
+    let flipped = newPatternObj.flipped
+    pattern = newPatternObj.arr
+    
+    let patternCountObj = getPatternCount(pattern)
+    let yCount = patternCountObj.y
+    let xCount = patternCountObj.x
+    let firstYidx = patternCountObj.firstYIndex
+    let xIndex = 0
+    if(yCount > 0){
+      let xLength = 1
+      while(xLength <= string.length){
+        let yLength = (string.length - (xLength * xCount)) / yCount
+        if(yLength % 1 === 0){
+        let yIndex = firstYidx * xLength
+        
+        let ySubStr = getSubString(yIndex, yLength, string)
+        let xSubStr = getSubString(xIndex, xLength, string)
+        
+        let createdString = createNewString(xSubStr,ySubStr,pattern)
+           if(createdString === string){
+              return flipped ? [ySubStr, xSubStr] : [xSubStr,ySubStr]
+          }
+        }
+        xLength++
+      }
+
+    }else {
+      let xLength = 0
+      while(xLength <= string.length){
+          
+          let xSubStr = getSubString(xIndex,xLength, string)
+          
+          let createdString = createNewString(xSubStr,"",pattern)
+          if(createdString === string){
+            return flipped ? ["",xSubStr] : [xSubStr,""]
+          }
+        xLength++
+      }
+    
+    }
+    
+    return []
+}
+
+
+function getNewPattern(array) {
+  
+  if(array[0] === "x"){
+    return {flipped: false, arr : array}
+  }
+  let newArr = []
+  for(let i = 0; i < array.length; i++){
+    newArr[i] = array[i] === "x" ? "y" : "x"
+  }
+  
+  return {flipped: true, arr: newArr}
+
+} // {flipped: boolean, arr: Array}
+
+
+function getPatternCount(array) {
+  let yCount = 0
+  let xCount = 0
+  let firstYIndex = null
+  for(let i = 0; i < array.length; i++){
+    let letter = array[i]
+    if(letter === "x"){
+      xCount++
+    }else {
+      if(firstYIndex === null){
+        firstYIndex = i
+      }
+      yCount++
+    }
+
+  }
+    return {y: yCount, x: xCount, firstYIndex: firstYIndex}
+} // {y: Number, x: Number, firstYIndex: Number}
+
+function getSubString(idx,length,string) {
+  let result = ""
+  let count = 0
+  for(let i = idx; count < length; count++){
+    result+= string[i]
+    i++
+  }
+  return result
+}  // String
+
+function createNewString(xStr,yStr,pattern) {
+let result = []
+
+for(let i = 0; i < pattern.length; i++){
+  let letter = pattern[i]
+  result[i] = letter === "x" ? xStr : yStr
+}
+
+return result.join("")
+} // String
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function patternMatcher(pattern, string){
+  let newPatternObj = getNewPatter(pattern)
+  let flipped = newPatternObj.flipped
+  pattern = newPatternObj.pattern
+  
+  let patternCount = getPatternCount(pattern)
+  let xCount = patternCount.xCount
+  let yCount = patternCount.yCount
+  let yFirstIdx = patternCount.yIdx
+  let xIndex = 0
+  if(yCount > 0){
+    let xLength = 1
+    while(xLength <= string.length){
+      let yLength = (string.length - (xLength * xCount)) / yCount
+      if(yLength % 1 === 0){
+       let yIndex = yFirstIdx * xLength
+       
+       let ySubStr = getSubString(yIndex, yLength,string)
+       let xSubStr = getSubString(xIndex,xLength,string)
+      
+      let createdString = createNewString(xSubStr,ySubStr,pattern)
+      if(createdString === string){
+        return flipped ? [ySubStr, xSubStr] : [xSubStr, ySubStr]
+      }
+    }
+      xLength++
+    }
+  
+  }else {
+    let xLength = 1
+    while(xLength <= string.length){
+      
+      let xSubStr = getSubString(xIndex,xLength,string)
+      
+      let createdString = createNewString(xSubStr,"",pattern)
+      if(createdString === string){
+        return flipped ?  ["", xSubStr] : [xSubStr,""] 
+      }
+      xLength++
+    }
+  
+  }
+  
+  return []
+}
+
+
+function getNewPatter(str){
+  if(str[0] === "x"){
+    return {flipped: false, pattern: str}
+  }
+  
+  let result = ""
+  for(let letter of str){
+    result += letter === "x" ? "y" : "x"
+  }
+  return {flipped: true, pattern: result}
+} // {flipped: boolean, pattern: String} Input: String
+
+function getPatternCount(str) {
+  let xCount = 0
+  let yCount = 0
+  let yIdx = null
+  for(let i = 0; i < str.length; i++){
+    let letter = str[i]
+    if(letter === "x"){
+      xCount++
+    }else {
+      if(yIdx === null){
+        yIdx = i 
+      }
+      yCount++
+    }
+  }
+return {xCount: xCount, yCount: yCount, yIdx: yIdx}
+} // {xCount : Number, yCount: Number, yIdx: Number} : input: String
+
+function getSubString (idx,length,string) {
+  let result = ""
+  let count = 0
+  for(let i = idx; count < length; count++){
+  result+= string[i]
+  i++
+  }
+  return result
+} // String
+
+function createNewString(xStr, yStr,pattern) {
+  let result = []
+  for(let i = 0; i < pattern.length; i++){
+  let letter = pattern[i]
+    result[i] = letter === "x" ? xStr : yStr
+  }
+  return result.join("")
+} // String
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
